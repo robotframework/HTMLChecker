@@ -20,15 +20,17 @@ class HTMLChecker(object):
         self._soup = Soup(path)
 
     def get_content(self, path):
-        """Returns all the textual from given HTML file.
+        """Returns all the text content without markup from given HTML file.
 
         Goes through the whole body of the file and reads text inside all tags.
 
         For example, given HTML:
-            <body>
-              <p>text <b>bolded</b> and <span>inside span</span> and more.</p>
-            </body>
-        this keyword returns "text bolded and inside spand and more."
+
+        <body>
+        <p>text <b>bolded</b> and <span>inside span</span> and more.</p>
+        </body>
+
+        this keyword returns "text bolded and inside span and more."
         """
         self._soup_from_file(path)
         return self._soup.content()
