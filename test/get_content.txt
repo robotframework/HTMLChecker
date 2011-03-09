@@ -1,0 +1,10 @@
+*** Settings ***
+Resource  resource.txt
+
+*** Variables ***
+${THE CONTENT}   This is a plain paragraph. This p contains inner span between. See teh image
+
+*** Test Cases ***
+All content is returned
+  ${content}=  Get Content  ${TEST FILE}
+  Should Be Equal  ${content}   ${THE CONTENT}
