@@ -3,6 +3,10 @@ from lib.BeautifulSoup import BeautifulSoup
 
 
 class HTMLChecker(object):
+    """A test library to check and valdiate contents of HTML files.
+
+    Currently, it only operates on files on the filesystem.
+    """
 
     def validate_images(self, path):
         """Validates all image links in the given HTML file.
