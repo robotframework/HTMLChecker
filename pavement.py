@@ -25,12 +25,6 @@ def sdist():
     pass
 
 @task
-@needs('generate_setup', 'minilib', 'setuptools.command.bdist_wininst')
-def bdist_wininst():
-    """Overrides sdist to make sure that our setup.py is generated."""
-    pass
-
-@task
 def atest():
     testdir = _join(BASEDIR, 'test')
     _sh(['pybot', '-d', _join(testdir, 'results'), testdir])
