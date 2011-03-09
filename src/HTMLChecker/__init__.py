@@ -4,7 +4,21 @@ from lib.BeautifulSoup import BeautifulSoup
 
 class HTMLChecker(object):
 
-    def _open(self, path):
+    def validate_images(self, path):
+        """Validates all image links in the given HTML file.
+
+        Fails on the first broken link."""
+        self._soup_from_file(path)
+        for img in self._soup.get_images():
+            img.validate()
+
+    def _soup_from_file(self, path):
+        self._soup = Soup(path)
+
+
+class Soup(object):
+
+    def __init__(self, path):
         self._basedir = os.path.abspath(os.path.dirname(path))
         self._soup = self._get_soup(path)
 
@@ -12,12 +26,7 @@ class HTMLChecker(object):
         with open(path) as infile:
             return BeautifulSoup(infile.read())
 
-    def validate_images(self, path):
-        self._open(path)
-        for img in self._get_images():
-            img.validate()
-
-    def _get_images(self):
+    def get_images(self):
         return [Image(img, self._basedir) for img in self._soup.findAll('img')]
 
 
