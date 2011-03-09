@@ -15,6 +15,20 @@ class HTMLChecker(object):
     def _soup_from_file(self, path):
         self._soup = Soup(path)
 
+    def get_content(self, path):
+        """Returns all the textual from given HTML file.
+
+        Goes through the whole body of the file and reads text inside all tags.
+
+        For example, given HTML:
+            <body>
+              <p>text <b>bolded</b> and <span>inside span</span> and more.</p>
+            </body>
+        this keyword returns "text bolded and inside spand and more."
+        """
+        self._soup_from_file(path)
+        return self._soup.content()
+
 
 class Soup(object):
 
@@ -28,6 +42,17 @@ class Soup(object):
 
     def get_images(self):
         return [Image(img, self._basedir) for img in self._soup.findAll('img')]
+
+    def content(self):
+        return ' '.join(t for t in self._collapse_tag(self._soup.body) if t)
+
+    def _collapse_tag(self, tag):
+        for elem in tag.contents:
+            if elem.string is not None:
+                yield elem.string.strip()
+                continue
+            for inner in self._collapse_tag(elem):
+                yield inner
 
 
 class Image(object):
