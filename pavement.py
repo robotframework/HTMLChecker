@@ -4,11 +4,14 @@ import subprocess
 from paver.easy import *
 from paver.setuputils import setup
 
+BASEDIR = os.path.dirname(__file__)
+VERSION = 0.1
+
 setup(
     name='robotframework-htmlchecker',
     package_dir = {'': 'src'},
     packages=['HTMLChecker', 'HTMLChecker.lib'],
-    version='0.1',
+    version=VERSION,
     url='https://github.com/robotframework/HTMLChecker',
     author='Robot Framework developers',
     author_email='robotframework@gmail.com'
@@ -28,9 +31,18 @@ def bdist_wininst():
 
 @task
 def atest():
-    testdir = os.path.join(os.path.dirname(__file__), 'test')
+    testdir = os.path.join(BASEDIR, 'test')
     cmd = ['pybot', '-d', os.path.join(testdir, 'results'), testdir]
     env = os.environ
     env.update({'PYTHONPATH': 'src'})
     subprocess.call(cmd, shell=(os.sep=='\\'), env=env)
+
+@task
+def version():
+    version_path = os.path.join(BASEDIR, 'src', 'HTMLChecker', 'version.py')
+    with open(version_path, 'w') as verfile:
+        verfile.write('''"This file is updated by running `paver version`."
+
+VERSION="%s"
+''' % VERSION)
 
