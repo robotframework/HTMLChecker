@@ -1,10 +1,5 @@
 *** Settings ***
-Library   HTMLChecker
-
-*** Variables ***
-${BASEDIR}   ${CURDIR}${/}resources
-${TEST FILE}   ${BASEDIR}${/}example.html
-${TEST FILE WITH PROBLEMS}  ${BASEDIR}${/}example_with_broken_links.html
+Resource  resource.txt
 
 *** Test Cases ***
 Valid Images
