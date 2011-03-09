@@ -43,7 +43,7 @@ VERSION="%s"
 def doc():
     libdoc = _join(BASEDIR, 'lib', 'libdoc.py')
     docdir = _get_dir('doc')
-    _sh(['python', libdoc , '-o', '%s/HTMLChecker.html' % docdir, 'HTMLChecker'])
+    _sh(['python', libdoc , '-o', '%s/HTMLChecker-%s.html' % (docdir, VERSION), 'HTMLChecker'])
 
 @task
 @needs('version', 'sdist', 'doc')
