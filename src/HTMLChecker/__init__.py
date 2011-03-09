@@ -1,5 +1,7 @@
 import os
+
 from lib.BeautifulSoup import BeautifulSoup
+from version import VERSION
 
 
 class HTMLChecker(object):
@@ -7,6 +9,7 @@ class HTMLChecker(object):
 
     Currently, it only operates on files on the filesystem.
     """
+    ROBOT_LIBRARY_VERSION = VERSION
 
     def validate_images(self, path):
         """Validates all image links in the given HTML file.
