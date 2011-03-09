@@ -1,5 +1,6 @@
 import os
-import subprocess
+from os.path import join as _join
+from subprocess import call
 
 from paver.easy import *
 from paver.setuputils import setup
@@ -31,18 +32,31 @@ def bdist_wininst():
 
 @task
 def atest():
-    testdir = os.path.join(BASEDIR, 'test')
-    cmd = ['pybot', '-d', os.path.join(testdir, 'results'), testdir]
-    env = os.environ
-    env.update({'PYTHONPATH': 'src'})
-    subprocess.call(cmd, shell=(os.sep=='\\'), env=env)
+    testdir = _join(BASEDIR, 'test')
+    _sh(['pybot', '-d', _join(testdir, 'results'), testdir])
 
 @task
 def version():
-    version_path = os.path.join(BASEDIR, 'src', 'HTMLChecker', 'version.py')
+    version_path = _join(BASEDIR, 'src', 'HTMLChecker', 'version.py')
     with open(version_path, 'w') as verfile:
         verfile.write('''"This file is updated by running `paver version`."
 
 VERSION="%s"
 ''' % VERSION)
 
+@task
+def doc():
+    libdoc = _join(BASEDIR, 'lib', 'libdoc.py')
+    docdir = _get_dir('doc')
+    _sh(['python', libdoc , '-o', '%s/HTMLChecker.html' % docdir, 'HTMLChecker'])
+
+def _sh(cmd):
+    env = os.environ
+    env.update({'PYTHONPATH': 'src'})
+    call(cmd, shell=(os.sep=='\\'), env=env)
+
+def _get_dir(name):
+    dirname = _join(BASEDIR, name)
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+    return dirname
