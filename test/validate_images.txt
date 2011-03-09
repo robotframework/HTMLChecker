@@ -1,0 +1,16 @@
+*** Settings ***
+Library   HTMLChecker
+
+*** Variables ***
+${BASEDIR}   ${CURDIR}${/}resources
+${TEST FILE}   ${BASEDIR}${/}example.html
+${TEST FILE WITH PROBLEMS}  ${BASEDIR}${/}example_with_broken_links.html
+
+*** Test Cases ***
+Valid Images
+  Validate Images   ${TEST FILE}
+
+Missing Images
+  Run Keyword And Expect Error  Image 'images/not_here.png' does not exist
+  ...  Validate Images  ${TEST FILE WITH PROBLEMS}
+
