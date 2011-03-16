@@ -30,8 +30,7 @@ class HTMLChecker(object):
 
         Fails on the first broken link."""
         self._soup_from_file(path)
-        for img in self._soup.get_images():
-            img.validate()
+        Images(self._soup).validate()
 
     def _soup_from_file(self, path):
         self._soup = Soup(path)
@@ -78,12 +77,34 @@ class Soup(object):
                 yield inner
 
 
+class Images(object):
+
+    def __init__(self, soup):
+        self._images = soup.get_images()
+
+    def validate(self):
+        self._report_missing_images([img.source for img in self._images
+                                     if not img.exists()])
+
+    def _report_missing_images(self, missing):
+        if missing:
+            if len(missing) == 1:
+                self._report_single_missing_image(missing)
+            self._report_multiple_missing_images(missing)
+
+    def _report_single_missing_image(self, missing):
+        raise AssertionError("Image '%s' does not exist" % missing[0])
+
+    def _report_multiple_missing_images(self, missing):
+        raise AssertionError("Images %s do not exist"
+                             % ", ".join("'%s'" % m for m in missing))
+
+
 class Image(object):
 
     def __init__(self, img_tag, basedir):
-        self._src = img_tag['src']
-        self._path = os.path.join(basedir, self._src)
+        self.source = img_tag['src']
+        self._path = os.path.join(basedir, self.source)
 
-    def validate(self):
-        if not os.path.isfile(self._path):
-            raise AssertionError("Image '%s' does not exist" % self._src)
+    def exists(self):
+        return os.path.isfile(self._path)
