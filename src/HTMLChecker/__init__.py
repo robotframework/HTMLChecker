@@ -72,7 +72,7 @@ class Soup(object):
     def _collapse_tag(self, tag):
         for elem in tag.contents:
             if elem.string is not None:
-                yield elem.string.strip()
+                yield elem.string.strip().replace('\n', ' ')
                 continue
             for inner in self._collapse_tag(elem):
                 yield inner
