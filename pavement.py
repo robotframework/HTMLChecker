@@ -6,7 +6,7 @@ from paver.easy import *
 from paver.setuputils import setup
 
 BASEDIR = os.path.dirname(__file__)
-VERSION = '0.1'
+VERSION = '0.2'
 
 setup(
     name='robotframework-htmlchecker',
