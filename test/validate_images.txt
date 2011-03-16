@@ -5,7 +5,10 @@ Resource  resource.txt
 Valid Images
   Validate Images   ${TEST FILE}
 
-Missing Images
+One Missing Image
   Run Keyword And Expect Error  Image 'images/not_here.png' does not exist
-  ...  Validate Images  ${TEST FILE WITH PROBLEMS}
+  ...  Validate Images  ${TEST FILE WITH ONE MISSING IMAGE}
 
+Many Missing Images
+  Run Keyword And Expect Error  Images 'images/not_here.png', 'images/not_here_either.png' do not exist
+  ...  Validate Images  ${TEST FILE WITH TWO MISSING IMAGES}

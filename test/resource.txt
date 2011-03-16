@@ -4,5 +4,6 @@ Library   HTMLChecker
 *** Variables ***
 ${BASEDIR}   ${CURDIR}${/}resources
 ${TEST FILE}   ${BASEDIR}${/}example.html
-${TEST FILE WITH PROBLEMS}  ${BASEDIR}${/}example_with_broken_links.html
+${TEST FILE WITH ONE MISSING IMAGE}  ${BASEDIR}${/}missing_image.html
+${TEST FILE WITH TWO MISSING IMAGES}  ${BASEDIR}${/}missing_images.html
 
