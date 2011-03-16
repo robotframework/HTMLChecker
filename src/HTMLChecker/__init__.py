@@ -28,7 +28,8 @@ class HTMLChecker(object):
     def validate_images(self, path):
         """Validates all image links in the given HTML file.
 
-        Fails on the first broken link."""
+        Validates all image links in the given file and reports all errors at
+        the end."""
         self._soup_from_file(path)
         Images(self._soup).validate()
 
