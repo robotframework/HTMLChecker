@@ -3,7 +3,9 @@ Library   HTMLChecker
 
 *** Variables ***
 ${BASEDIR}   ${CURDIR}${/}resources
-${TEST FILE}   ${BASEDIR}${/}example.html
-${TEST FILE WITH ONE MISSING IMAGE}  ${BASEDIR}${/}missing_image.html
-${TEST FILE WITH TWO MISSING IMAGES}  ${BASEDIR}${/}missing_images.html
+${CONTENT FILE}  ${BASEDIR}${/}example.html
+${IMAGES FILE}   ${BASEDIR}${/}images.html
+${LINKS FILE}    ${BASEDIR}${/}links.html
+${FILE WITH ONE MISSING IMAGE}  ${BASEDIR}${/}missing_image.html
+${FILE WITH TWO MISSING IMAGES}  ${BASEDIR}${/}missing_images.html
 

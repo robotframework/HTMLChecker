@@ -2,9 +2,9 @@
 Resource  resource.txt
 
 *** Variables ***
-${THE CONTENT}   This is a plain paragraph. This p contains inner span between. See teh image
+${THE CONTENT}   This is a plain paragraph. This p contains inner span between. There's also a div.
 
 *** Test Cases ***
 All content is returned
-  ${content}=  Get Content  ${TEST FILE}
+  ${content}=  Get Content  ${CONTENT FILE}
   Should Be Equal  ${content}   ${THE CONTENT}
