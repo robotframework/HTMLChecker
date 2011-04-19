@@ -1,0 +1,16 @@
+*** Settings ***
+Resource  resource.txt
+
+*** Test Cases ***
+Valid Links
+  Validate Links   ${LINKS FILE}
+
+One Missing Link
+  Run Keyword And Expect Error
+  ...  Link target 'missing.html' does not exist
+  ...  Validate Links  ${FILE WITH ONE MISSING LINK}
+
+Many Missing Links
+  Run Keyword And Expect Error
+  ...  Link targets 'missing.html', 'another_hit.html' do not exist
+  ...  Validate Links  ${FILE WITH TWO MISSING LINKS}

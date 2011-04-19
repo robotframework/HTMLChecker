@@ -25,6 +25,10 @@ class HTMLChecker(object):
     """
     ROBOT_LIBRARY_VERSION = VERSION
 
+    def validate_links(self, path):
+        self._soup_from_file(path)
+        Links(self._soup).validate()
+
     def validate_images(self, path):
         """Validates all image links in the given HTML file.
 
@@ -63,6 +67,10 @@ class Soup(object):
         with open(path) as infile:
             return BeautifulSoup(infile.read())
 
+    def get_links(self):
+        return [Link(link, self._basedir) for link in self._soup.findAll('a')]
+
+
     def get_images(self):
         return [Image(img, self._basedir) for img in self._soup.findAll('img')]
 
@@ -76,6 +84,29 @@ class Soup(object):
                 continue
             for inner in self._collapse_tag(elem):
                 yield inner
+
+
+class Links(object):
+
+    def __init__(self, soup):
+        self._links = soup.get_links()
+
+    def validate(self):
+        self._report_missing_links([link.target for link in self._links
+                                    if not link.exists()])
+
+    def _report_missing_links(self, missing):
+        if missing:
+            if len(missing) == 1:
+                self._report_single_missing_link(missing)
+            self._report_multiple_missing_links(missing)
+
+    def _report_single_missing_link(self, missing):
+        raise AssertionError("Link target '%s' does not exist" % missing[0])
+
+    def _report_multiple_missing_links(self, missing):
+        raise AssertionError("Link targets %s do not exist"
+                             % ", ".join("'%s'" % m for m in missing))
 
 
 class Images(object):
@@ -106,6 +137,16 @@ class Image(object):
     def __init__(self, img_tag, basedir):
         self.source = img_tag['src']
         self._path = os.path.join(basedir, self.source)
+
+    def exists(self):
+        return os.path.isfile(self._path)
+
+
+class Link(object):
+
+    def __init__(self, a_tag, basedir):
+        self.target = a_tag['href']
+        self._path = os.path.join(basedir, self.target)
 
     def exists(self):
         return os.path.isfile(self._path)
