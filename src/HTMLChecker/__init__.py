@@ -68,11 +68,14 @@ class Soup(object):
             return BeautifulSoup(infile.read())
 
     def get_links(self):
-        return [Link(link, self._basedir) for link in self._soup.findAll('a')]
+        return [Link(t, self._basedir)
+                for t in self._soup.findAll('a', href=True)]
 
+    def get_anchors(self):
+        return [t for t in self._soup.findAll('a', attrs={'name': True})]
 
     def get_images(self):
-        return [Image(img, self._basedir) for img in self._soup.findAll('img')]
+        return [Image(t, self._basedir) for t in self._soup.findAll('img')]
 
     def content(self):
         return ' '.join(t for t in self._collapse_tag(self._soup.body) if t)
@@ -86,57 +89,57 @@ class Soup(object):
                 yield inner
 
 
-class Links(object):
+class _Elements(object):
+
+    def validate(self):
+        invalids = self._invalid_items()
+        if invalids:
+            self._report_validation_error(invalids)
+
+    def _report_validation_error(self, invalids):
+        raise AssertionError(self._create_validation_error(invalids))
+
+    def _create_validation_error(self, invalids):
+        if len(invalids) == 1:
+            return self._single_item_validation_error(invalids[0])
+        return self._multi_item_validation_error(invalids)
+
+    def _single_item_validation_error(self, invalid):
+        return "%s %s does not exist" % (self.elem_type, invalid)
+
+    def _multi_item_validation_error(self, invalids):
+        return "%ss %s do not exist" % \
+                (self.elem_type, ", ".join(str(i) for i in invalids))
+
+
+class Links(_Elements):
+    elem_type = "Link target"
 
     def __init__(self, soup):
         self._links = soup.get_links()
 
-    def validate(self):
-        self._report_missing_links([link.target for link in self._links
-                                    if not link.exists()])
-
-    def _report_missing_links(self, missing):
-        if missing:
-            if len(missing) == 1:
-                self._report_single_missing_link(missing)
-            self._report_multiple_missing_links(missing)
-
-    def _report_single_missing_link(self, missing):
-        raise AssertionError("Link target '%s' does not exist" % missing[0])
-
-    def _report_multiple_missing_links(self, missing):
-        raise AssertionError("Link targets %s do not exist"
-                             % ", ".join("'%s'" % m for m in missing))
+    def _invalid_items(self):
+        return [l for l in self._links if not l.exists()]
 
 
-class Images(object):
+class Images(_Elements):
+    elem_type = "Image"
 
     def __init__(self, soup):
         self._images = soup.get_images()
 
-    def validate(self):
-        self._report_missing_images([img.source for img in self._images
-                                     if not img.exists()])
-
-    def _report_missing_images(self, missing):
-        if missing:
-            if len(missing) == 1:
-                self._report_single_missing_image(missing)
-            self._report_multiple_missing_images(missing)
-
-    def _report_single_missing_image(self, missing):
-        raise AssertionError("Image '%s' does not exist" % missing[0])
-
-    def _report_multiple_missing_images(self, missing):
-        raise AssertionError("Images %s do not exist"
-                             % ", ".join("'%s'" % m for m in missing))
+    def _invalid_items(self):
+        return [img for img in self._images if not img.exists()]
 
 
 class Image(object):
 
     def __init__(self, img_tag, basedir):
-        self.source = img_tag['src']
-        self._path = os.path.join(basedir, self.source)
+        self._source = img_tag['src']
+        self._path = os.path.join(basedir, self._source)
+
+    def __str__(self):
+        return "'%s'" % self._source
 
     def exists(self):
         return os.path.isfile(self._path)
@@ -145,8 +148,29 @@ class Image(object):
 class Link(object):
 
     def __init__(self, a_tag, basedir):
-        self.target = a_tag['href']
-        self._path = os.path.join(basedir, self.target)
+        self._target, self._anchor = self._parse_tag(a_tag)
+        self._path = os.path.join(basedir, self._target)
+
+    def _parse_tag(self, tag):
+        parts = tag['href'].split('#')
+        if len(parts) == 1:
+            return parts[0], None
+        return parts[0], parts[1]
+
+    def __str__(self):
+        s = self._target
+        if self._anchor:
+            s += '#%s' % self._anchor
+        return  "'%s'" % s
 
     def exists(self):
+        return self._validate_target() and self._validate_anchor()
+
+    def _validate_target(self):
         return os.path.isfile(self._path)
+
+    def _validate_anchor(self):
+        if not self._anchor:
+            return True
+        return any(tag for tag in Soup(self._path).get_anchors()
+                   if tag['name'] == self._anchor)
