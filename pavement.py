@@ -6,7 +6,7 @@ from paver.easy import *
 from paver.setuputils import setup
 
 BASEDIR = os.path.dirname(__file__)
-VERSION = '0.2'
+VERSION = '0.3'
 
 setup(
     name='robotframework-htmlchecker',
@@ -34,7 +34,6 @@ def version():
     version_path = _join(BASEDIR, 'src', 'HTMLChecker', 'version.py')
     with open(version_path, 'w') as verfile:
         verfile.write('''"This file is updated by running `paver version`."
-
 VERSION="%s"
 ''' % VERSION)
 
@@ -43,16 +42,18 @@ VERSION="%s"
 def doc():
     libdoc = _join(BASEDIR, 'lib', 'libdoc.py')
     docdir = _get_dir('doc')
-    _sh(['python', libdoc , '-o', '%s/HTMLChecker-%s.html' % (docdir, VERSION), 'HTMLChecker'])
+    _sh(['python', libdoc , '-o', '%s/HTMLChecker-%s.html' % (docdir, VERSION),
+         'HTMLChecker'])
 
 @task
 @needs('version', 'sdist', 'doc')
 def release():
+    _sh(['git', 'ci', '-m', 'updated version'])
     _sh(['git', 'tag', VERSION])
     print 'Created git tag for %s' % VERSION
-    print 'Windows installer needst to be created separately with `paver bdist_wininst`'
-    print 'Remeber to push and upload sdist & doc to GitHub'
-    pass
+    print 'Windows installer has to be created with `paver bdist_wininst`'
+    print 'Remember to push and upload sdist & doc to GitHub'
+
 
 def _sh(cmd):
     env = os.environ
