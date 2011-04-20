@@ -26,14 +26,26 @@ class HTMLChecker(object):
     ROBOT_LIBRARY_VERSION = VERSION
 
     def validate_links(self, path):
+        """Validates all links in the given HTML file.
+
+        Goes through all the links in the file and reports validation errors
+        in the end.
+
+        A link is valid if the target file (href) exists and the (optional)
+        anchor is defined inisde the target file.
+        """
         self._soup_from_file(path)
         Links(self._soup).validate()
 
     def validate_images(self, path):
         """Validates all image links in the given HTML file.
 
-        Validates all image links in the given file and reports all errors at
-        the end."""
+        Goes through all the images in the file and reports validation errors
+        in the end.
+
+        An image is valid if the image file (src) it is pointing to can be
+        found.
+        """
         self._soup_from_file(path)
         Images(self._soup).validate()
 
