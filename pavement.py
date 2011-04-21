@@ -48,7 +48,7 @@ def doc():
 @task
 @needs('version', 'sdist', 'doc')
 def release():
-    _sh(['git', 'ci', '-m', 'updated version'])
+    _sh(['git', 'ci', '-a', '-m', 'updated version'])
     _sh(['git', 'tag', VERSION])
     print 'Created git tag for %s' % VERSION
     print 'Windows installer has to be created with `paver bdist_wininst`'
