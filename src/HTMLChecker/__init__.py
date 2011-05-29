@@ -84,10 +84,13 @@ class Soup(object):
                 for t in self._soup.findAll('a', href=True)]
 
     def get_anchors(self):
-        return [t for t in self._soup.findAll('a', attrs={'name': True})]
+        return [t for t in self._soup.findAll('a')]
 
     def get_images(self):
         return [Image(t, self._basedir) for t in self._soup.findAll('img')]
+
+    def all_tags(self):
+        return [t for t in self._soup.findAll()]
 
     def content(self):
         return ' '.join(t for t in self._collapse_tag(self._soup.body) if t)
@@ -184,5 +187,9 @@ class Link(object):
     def _validate_anchor(self):
         if not self._anchor:
             return True
-        return any(tag for tag in Soup(self._path).get_anchors()
-                   if tag['name'] == self._anchor)
+        soup = Soup(self._path)
+        return any(t for t in soup.get_anchors() if self._matches_anchor(t)) or \
+                any(t for t in soup.all_tags() if self._matches_anchor(t))
+
+    def _matches_anchor(self, tag):
+        return self._anchor in [tag.get('name', None), tag.get('id', None)]
