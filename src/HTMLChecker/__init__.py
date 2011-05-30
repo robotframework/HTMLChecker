@@ -24,6 +24,7 @@ class HTMLChecker(object):
     Currently, it only operates on files on the filesystem.
     """
     ROBOT_LIBRARY_VERSION = VERSION
+    _previous_path = None
 
     def validate_links(self, path):
         """Validates all links in the given HTML file.
@@ -50,7 +51,11 @@ class HTMLChecker(object):
         Images(self._soup).validate()
 
     def _soup_from_file(self, path):
-        self._soup = Soup(path)
+        path = os.path.abspath(path)
+        if path != self._previous_path:
+            self._soup = Soup(path)
+            self._previous_path = path
+        return self._soup
 
     def get_content(self, path):
         """Returns all the text content without markup from given HTML file.
