@@ -26,7 +26,7 @@ def sdist():
 
 @task
 def atest():
-    testdir = _join(BASEDIR, 'test')
+    testdir = _join(BASEDIR, 'test', 'robot')
     _sh(['pybot', '-d', _join(testdir, 'results'), testdir])
 
 @task

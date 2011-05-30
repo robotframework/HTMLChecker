@@ -2,7 +2,7 @@
 Library   HTMLChecker
 
 *** Variables ***
-${BASEDIR}   ${CURDIR}${/}resources
+${BASEDIR}   ${CURDIR}${/}..${/}resources
 ${CONTENT FILE}  ${BASEDIR}${/}example.html
 ${LINKS FILE}    ${BASEDIR}${/}valid.html
 ${FILE WITH ONE MISSING LINK}    ${BASEDIR}${/}one_missing.html
