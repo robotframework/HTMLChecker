@@ -1,4 +1,6 @@
-A [Robot Framework](http://robotframework.org) test library for running checks and valdiations on HTML files.
+A [Robot Framework](http://robotframework.org) test library for running checks and validations on HTML files.
+
+Downloads are available at https://github.com/robotframework/HTMLChecker/downloads
 
 Developing
 ----------
